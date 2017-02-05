@@ -1,0 +1,40 @@
+close all;
+clear all;
+
+% ターゲットの設定
+target = [];
+for i=1:20
+    if mod(i, 2)
+        for j=1:20
+            target = [target; [i/2-0.25 j/2-0.25]];
+        end
+    else
+        for j=20:-1:1
+            target = [target; [i/2-0.25 j/2-0.25]];
+        end
+    end
+end
+
+% ロボットの情報
+robot.x = 0.25;         % x軸座標
+robot.y = 0.25;         % y軸座標
+robot.theta = 0.0;      % ターゲットのある方向
+
+% 水田のプロット
+figure;
+% ターゲットのプロット
+plot(target(:, 1), target(:, 2), 'r*');
+axis([0 10 0 10]);
+grid on;
+ax = gca;
+ax.GridAlpha = 0.5;
+ax.LineWidth = 1.0;
+ax.XTick = (0:0.5:10);
+ax.YTick = (0:0.5:10);
+
+% アニメーション化されたラインの作成
+h = animatedline('Color', 'k', 'Marker', '-');
+
+while(1)
+    addpoints(h, robot.x, robot.y);
+end

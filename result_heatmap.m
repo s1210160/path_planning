@@ -10,9 +10,9 @@ axis([0 10 0 10]);
 set(gca,'YDir','normal');
 colorbar
 
-figure('Name', '‘|ˆøŽžŠÔ', 'NumberTitle', 'off');
+figure('Name', 'ŠÂ‹«•‰‰×', 'NumberTitle', 'off');
 colormap jet;
-imagesc([0.25 9.75], [0.25 9.75], field.time, [0 10]);
+imagesc([0.25 9.75], [0.25 9.75], field.env, [0 700]);
 set(gca,'YDir','normal');
 colorbar;
 

@@ -1,4 +1,4 @@
-function [] = init(target1, target2)
+function [] = init(target1, target2, w)
 %UNTITLED3 この関数の概要をここに記述
 %   詳細説明をここに記述
 
@@ -14,8 +14,8 @@ grid on;
 ax = gca;
 ax.GridAlpha = 0.5;
 ax.LineWidth = 1.0;
-ax.XTick = (0:0.5:10);
-ax.YTick = (0:0.5:10);
+ax.XTick = (0:w:10);
+ax.YTick = (0:w:10);
 
 
 end

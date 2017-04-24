@@ -9,16 +9,11 @@ p = [prev.x prev.y];
 P0 = n - p;
 P1 = t - n;
 
-theta = acos(dot(P0, P1) / (sqrt(P0(1).^2 + P0(2).^2) * sqrt(P1(1).^2 + P1(2).^2))) / pi * 180;
+theta = acos(dot(P0, P1) / (sqrt(P0(1).^2 + P0(2).^2) * sqrt(P1(1).^2 + P1(2).^2)));
 
 b = P0(1)*P1(2) - P0(2)*P1(1);
 
 theta = theta * b / sqrt(b.^2);
 
-%{
-if (P0(1)*P1(2) - P0(2)*P1(1)) < 0
-    theta = -theta;
-end
-%}
 end
 

@@ -1,0 +1,73 @@
+close all;
+clear all;
+
+filename1 = 'experiment/all_cell/mu=0,sigma=20/trial1/env2.csv';
+filename2 = 'experiment/all_cell/mu=0,sigma=20/trial2/env2.csv';
+filename3 = 'experiment/all_cell/mu=0,sigma=20/trial3/env2.csv';
+filename4 = 'experiment/all_cell/mu=0,sigma=20/trial4/env2.csv';
+filename5 = 'experiment/all_cell/mu=0,sigma=20/trial5/env2.csv';
+filename6 = 'experiment/all_cell/mu=0,sigma=20/trial6/env2.csv';
+filename7 = 'experiment/all_cell/mu=0,sigma=20/trial7/env2.csv';
+filename8 = 'experiment/all_cell/mu=0,sigma=20/trial8/env2.csv';
+filename9 = 'experiment/all_cell/mu=0,sigma=20/trial9/env2.csv';
+filename10 = 'experiment/all_cell/mu=0,sigma=20/trial10/env2.csv';
+filename11 = 'experiment/static/mu=0,sigma=20/trial1/env2.csv';
+filename12 = 'experiment/static/mu=0,sigma=20/trial2/env2.csv';
+filename13 = 'experiment/static/mu=0,sigma=20/trial3/env2.csv';
+filename14 = 'experiment/static/mu=0,sigma=20/trial4/env2.csv';
+filename15 = 'experiment/static/mu=0,sigma=20/trial5/env2.csv';
+filename16 = 'experiment/static/mu=0,sigma=20/trial6/env2.csv';
+filename17 = 'experiment/static/mu=0,sigma=20/trial7/env2.csv';
+filename18 = 'experiment/static/mu=0,sigma=20/trial8/env2.csv';
+filename19 = 'experiment/static/mu=0,sigma=20/trial9/env2.csv';
+filename20 = 'experiment/static/mu=0,sigma=20/trial10/env2.csv';
+filename21 = 'experiment/dynamic/mu=0,sigma=20/trial1/env2.csv';
+filename22 = 'experiment/dynamic/mu=0,sigma=20/trial2/env2.csv';
+filename23 = 'experiment/dynamic/mu=0,sigma=20/trial3/env2.csv';
+filename24 = 'experiment/dynamic/mu=0,sigma=20/trial4/env2.csv';
+filename25 = 'experiment/dynamic/mu=0,sigma=20/trial5/env2.csv';
+filename26 = 'experiment/dynamic/mu=0,sigma=20/trial6/env2.csv';
+filename27 = 'experiment/dynamic/mu=0,sigma=20/trial7/env2.csv';
+filename28 = 'experiment/dynamic/mu=0,sigma=20/trial8/env2.csv';
+filename29 = 'experiment/dynamic/mu=0,sigma=20/trial9/env2.csv';
+filename30 = 'experiment/dynamic/mu=0,sigma=20/trial10/env2.csv';
+
+data1 = csvread(filename1, 1, 1, [1, 1, 18, 18]);
+data2 = csvread(filename2, 1, 1, [1, 1, 18, 18]);
+data3 = csvread(filename3, 1, 1, [1, 1, 18, 18]);
+data4 = csvread(filename4, 1, 1, [1, 1, 18, 18]);
+data5 = csvread(filename5, 1, 1, [1, 1, 18, 18]);
+data6 = csvread(filename6, 1, 1, [1, 1, 18, 18]);
+data7 = csvread(filename7, 1, 1, [1, 1, 18, 18]);
+data8 = csvread(filename8, 1, 1, [1, 1, 18, 18]);
+data9 = csvread(filename9, 1, 1, [1, 1, 18, 18]);
+data10 = csvread(filename10, 1, 1, [1, 1, 18, 18]);
+data11 = csvread(filename11, 1, 1, [1, 1, 18, 18]);
+data12 = csvread(filename12, 1, 1, [1, 1, 18, 18]);
+data13 = csvread(filename13, 1, 1, [1, 1, 18, 18]);
+data14 = csvread(filename14, 1, 1, [1, 1, 18, 18]);
+data15 = csvread(filename15, 1, 1, [1, 1, 18, 18]);
+data16 = csvread(filename16, 1, 1, [1, 1, 18, 18]);
+data17 = csvread(filename17, 1, 1, [1, 1, 18, 18]);
+data18 = csvread(filename18, 1, 1, [1, 1, 18, 18]);
+data19 = csvread(filename19, 1, 1, [1, 1, 18, 18]);
+data20 = csvread(filename20, 1, 1, [1, 1, 18, 18]);
+data21 = csvread(filename21, 1, 1, [1, 1, 18, 18]);
+data22 = csvread(filename22, 1, 1, [1, 1, 18, 18]);
+data23 = csvread(filename23, 1, 1, [1, 1, 18, 18]);
+data24 = csvread(filename24, 1, 1, [1, 1, 18, 18]);
+data25 = csvread(filename25, 1, 1, [1, 1, 18, 18]);
+data26 = csvread(filename26, 1, 1, [1, 1, 18, 18]);
+data27 = csvread(filename27, 1, 1, [1, 1, 18, 18]);
+data28 = csvread(filename28, 1, 1, [1, 1, 18, 18]);
+data29 = csvread(filename29, 1, 1, [1, 1, 18, 18]);
+data30 = csvread(filename30, 1, 1, [1, 1, 18, 18]);
+
+
+figure;
+boxplot([data1(:) data2(:) data3(:) data4(:) data5(:) data6(:) data7(:) data8(:) data9(:) data10(:) 
+    data11(:) data12(:) data13(:) data14(:) data15(:) data16(:) data17(:) data18(:) data19(:) data20(:)
+    data21(:) data22(:) data23(:) data24(:) data25(:) data26(:) data27(:) data28(:) data29(:) data30(:)]);
+axis([0 31 0 800]);
+xlabel('The number of trials', 'FontSize', 20);
+ylabel('Environment effect', 'FontSize', 20);

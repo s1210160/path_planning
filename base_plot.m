@@ -1,4 +1,4 @@
-function [] = init(target1, target2, w)
+function [ax] = base_plot(target, w)
 %UNTITLED3 この関数の概要をここに記述
 %   詳細説明をここに記述
 
@@ -7,8 +7,7 @@ function [] = init(target1, target2, w)
 figure;
 hold on;
 % ターゲットのプロット
-plot(target1(:, 1), target1(:, 2), 'rx');
-plot(target2(:, 1), target2(:, 2), 'rx');
+plot(target(:, 1), target(:, 2), 'bx');
 axis([0 10 0 10]);
 grid on;
 ax = gca;

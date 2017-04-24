@@ -12,11 +12,25 @@ w = 1/2;
 % –¢‘|ˆøƒZƒ‹‚Ì’Šo
 task = [];
 test = [];
+%{
+for i=1:size(field.cover, 1)
+    for j=1:size(field.cover, 2)
+        if field.cover(i, j) < 1
+            x = (j - 0.5) * w;
+            y = (i - 0.5) * w;
+            if 1 < x && x < 9
+                if 1 < y && y < 9
+                    task = [task; [x y]];
+                end
+            end
+        end
+    end
+end
+%}
 
 for i=1:size(field.cover, 1)-1
     for j=1:size(field.cover, 2)-1
         flag = 0;
-        % ‘|ˆø‰ñ”‚ª‚O‰ñ‚Å‚ ‚èA‚©‚Â‘|ˆø—Ìˆæ‚ÉŠÜ‚Ü‚ê‚é
         if (field.cover(i, j) < 1) && (is_area(i, j, w) == 1)
             flag = flag + 1;
         end
@@ -29,11 +43,9 @@ for i=1:size(field.cover, 1)-1
         if (field.cover(i+1, j+1) < 1) && (is_area(i+1, j+1, w) == 1)
             flag = flag + 1;
         end
-        %‚RƒuƒƒbƒNˆÈã–¢‘|ˆøƒZƒ‹‚ª˜AŒ‹‚µ‚Ä‚¢‚é
-        if flag >= 3
+        if flag > 3
             x = (j - 0.5) * w;
             y = (i - 0.5) * w;
-            
             task = [task; [x+0.25 y+0.25]];
         end
     end
@@ -61,7 +73,7 @@ for i=1:size(task, 1)
         end
     end
 end
-task = sortrows(task, 3)
+task = sortrows(task, 3);
 
 % ’[‚Ì‚à‚Ì‚¾‚¯c‚·
 target = task(1, :);
@@ -85,7 +97,7 @@ for i=1:size(task, 1)
 end
 angle_rate = abs(angle) / sum(abs(angle));
 distance_rate = distance / sum(distance);
-target = [0*distance_rate+1*angle_rate x y c];
+target = [0.3*distance_rate+0.7*angle_rate x y c];
 target = sortrows(target);
 
 task = target(:, [2:4]);

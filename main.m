@@ -1,20 +1,22 @@
 close all;
 clear all;
 
+name = 0;
+
 % ガウス分布の設定
 mu = 0;
-sigma = 10.0 * pi / 180;
+sigma = 20.0 * pi / 180;
 R = chol(sigma);
 
 % セル幅
-cell_w = 1/2; % [m]
+cell_w = 1; % [m]
 
 % ターゲットの設定
 target1 = setTarget_hor(cell_w);      % 水平パラレル動作
 target2 = setTarget_vert(cell_w);     % 鉛直パラレル動作
-target3 = setTarget_vert(cell_w);
 target = target1;               % ターゲット設定
 n = 1;                          % ターゲット番号
+circle = 1;
 
 % ヒートマップ用配列の初期化
 field.cover = zeros(20, 20);    % 掃引回数
@@ -22,23 +24,30 @@ field.env = zeros(20, 20);     % 環境負荷
 field.pass = zeros(100, 100);   % 通過時間
 
 % ロボットの初期姿勢
-robot.x = 0.25;         % x軸座標
-robot.y = 0.75;         % y軸座標
-robot.theta = 0.0;     % 方角
-% 一時刻前のロボットの位置情報
-pre_robot.x = robot.x;
-pre_robot.y = 0.0;
+for i=1:4
+robot(i).x = 0.25;         % x軸座標
+robot(i).y = 0.75;         % y軸座標
+robot(i).theta = 0.0;      % 方角
+end
+
 % ロボットのサイズ
 r = 0.15;
 B = 0.3;
 
+angle = 0;
+
 % 基本となるプロット
-base_plot(target1, target1, cell_w);
+f = base_plot(target1, cell_w);
 % アニメーション化されたラインの作成
-h = animatedline('Color', 'k', 'LineStyle', '-', 'LineWidth', 2.0);
+h1 = animatedline(f, 'Color', 'k', 'LineStyle', '-', 'LineWidth', 2.0);
+axis square;
+
+% 経路長
+len = 0;
 
 % ストップウォッチ開始
 time1 = 0;
+tic;
 
 %--------------------------ループ---------------------------%
 while(1)
@@ -48,25 +57,38 @@ while(1)
     
     %-----------------終了条件-------------------%
     % 最後まで訪問した
-    if n > size(target, 1)
-        if target == target3
-            break;
+    if size(target, 1) == 0
+        if circle == 2
+                break;
         else
-            n = 1;
-            target3 = calc_task(field, robot);
-            target = target3;   % ターゲットの更新
+            circle = circle + 1;
+            
+            while_time(1) = time1 / 60;
+            program_time(1) = toc;
+            path_l(1) = len;
+            count1 = visit_count(field);
+            
+            target = calc_task(field, robot(2), robot(3), cell_w) % ターゲットの更新
+            
+            if size(target) == 0
+                break;
+            end
             
             % 一周目完了したときの結果プロット
-            result_heatmap(field);
-
+            f2 = result_heatmap(field, 1, name);
+            
+            h1 = animatedline(f, 'Color', 'b', 'LineStyle', '-', 'LineWidth', 2.0);
+            h2 = animatedline(f2, 'Color', 'r', 'LineStyle', '-', 'LineWidth', 2.0);
+            
+            tic;
         end
     end
     
-   %　領域外に出た
-    if 10 < robot.x || robot.x < 0
+    %　領域外に出た
+    if 10 < robot(2).x || robot(2).x < 0
         break;
     end
-    if 10 < robot.y || robot.y < 0
+    if 10 < robot(2).y || robot(2).y < 0
         break;
     end
     %---------------------------------------------%
@@ -79,36 +101,71 @@ while(1)
     
     %---------------------制御--------------------%
     % 次に向かうターゲットのある方向
-    angle = calc_angle(target(n,:), robot, pre_robot);
+    if mod(time1, 2) == 0
+        angle = calc_angle(target(n, :), robot(2), robot(3));
+        plot(f, target(n, 1), target(n, 2), 'r*');
+        if circle == 2
+            plot(f2, target(n, 1), target(n, 2), 'r*');
+        end
+    end
     
     % 速度，回転速度，環境負荷
     [V, omega, rice_effect] = control(angle, noise_L, noise_R, r, B);
     
-    V;
-    
     % 一時刻前のロボットの位置情報の更新
-    pre_robot.x = robot.x;
-    pre_robot.y = robot.y;
-
-    robot.theta = robot.theta + omega;
-    robot.x = robot.x + V * cos(robot.theta);
-    robot.y = robot.y + V * sin(robot.theta);
+    for i=4:-1:2
+    robot(i).x = robot(i-1).x;
+    robot(i).y = robot(i-1).y;
+    end
+    
+    robot(1).theta = robot(1).theta + omega;
+    robot(1).x = robot(1).x + V * cos(robot(1).theta);
+    robot(1).y = robot(1).y + V * sin(robot(1).theta);
+    
+    len = sqrt((robot(2).x-robot(3).x).^2 + (robot(2).y-robot(3).y).^2) + len;
+    
+    %---------------------------------------------%
+    
+    % ---------------ターゲットの更新--------------%
+    if circle == 1
+        if target(n,1)-0.5*cell_w < robot(2).x && robot(2).x <= target(n,1)+0.5*cell_w
+            if target(n,2)-0.5*cell_w < robot(2).y && robot(2).y <= target(n,2)+0.5*cell_w
+                target(n, :) = [];
+            end
+        end
+    end
+    
+    if circle == 2
+        if target(n, 1)-0.5 < robot(2).x && robot(2).x < target(n, 1)+0.5
+            if target(n, 2)-0.5 < robot(2).y && robot(2).y < target(n, 2)+0.5
+                plot(f, target(n, 1), target(n, 2), 'g*');
+                plot(f2, target(n, 1), target(n, 2), 'g*');
+                
+                if size(target, 1) > 1 && target(n, 3) == target(n+1, 3)
+                    target(n, :) = [];
+                else
+                    target(n, :) = [];
+                    target = calc_task(field, robot(2), robot(3), cell_w);
+                end
+            end
+        end
+    end
 
     %---------------------------------------------%
     
     % -----------ヒートマップ用配列の更新----------%
-    i = fix(2 * robot.x);
-    j = fix(2 * robot.y);
-    if fix(2 * pre_robot.x) ~= i || fix(2 * pre_robot.y) ~= j
+    i = fix(2 * robot(2).x);
+    j = fix(2 * robot(2).y);
+    if fix(2 * robot(3).x) ~= i || fix(2 * robot(3).y) ~= j
         % 訪問回数の更新
         field.cover(j+1, i+1) = field.cover(j+1, i+1) + 1;
     end
     % 訪問時間の更新
     field.env(j+1, i+1) = field.env(j+1, i+1) + rice_effect;
     
-    i = round(size(field.pass, 1) / 10 *robot.x, 0);
-    j = round(size(field.pass, 1) / 10 *robot.y, 0);
-    if round(pre_robot.x, 1) ~= i || round(pre_robot.y, 1) ~= j 
+    i = round(size(field.pass, 1) / 10 *robot(2).x, 0);
+    j = round(size(field.pass, 1) / 10 *robot(2).y, 0);
+    if round(robot(3).x, 1) ~= i || round(robot(3).y, 1) ~= j
         for k=-1:1
             for l=-1:1
                 if 0 < j+k && j+k < 100
@@ -121,54 +178,48 @@ while(1)
         end
     end
     %---------------------------------------------%
-
-    
-    % ターゲットの更新
-    if target(n,1)-cell_w/2 < robot.x && robot.x <= target(n,1)+cell_w/2
-        if target(n,2)-cell_w/2 < robot.y && robot.y <= target(n,2)+cell_w/2
-            % ターゲット番号の更新
-            n = n + 1;
-            
-            
-            if target == target3
-                target(1, :) = [];
-                
-                if size(target, 1) == 0
-                    break;
-                end
-                
-                
-                if size(target, 1) < 2
-                    target3 = target;
-                elseif target(1, 3) == target(2, 3)
-                    target3 = update_task(target, robot);
-                else
-                    target3 = target;
-                end
-                target = target3;
-                n = 1;
-            end
-            
-        end
-    end
     
     % アニメーション
-    addpoints(h, robot.x, robot.y);
-    if target == target3
-    drawnow;
+    addpoints(h1, robot(2).x, robot(2).y);
+    if circle == 2
+        addpoints(h2, robot(2).x, robot(2).y);
+        drawnow;
     end
-    %plot(robot.x, robot.y, 'b*');
 end
 %--------------------------ループ終了-------------------------%
+% プログラム時間
+program_time(2) = program_time(1) + toc;
 
 % 結果プロット
-result_heatmap(field);
+result_heatmap(field, 2, name);
 
 % 経過時間[min]
-while_time = time1 / 60;
+while_time(2) = time1 / 60;
+% 経路長
+path_l(2) = len;
+count2 = visit_count(field);
 
-file_writer(field);
 
-result = visit_count(field)
+%{
+filename = strcat('experiment/static/mu=0,sigma=10/trial', num2str(name));
+saveas(f, strcat(filename, '/path.png'));
+saveas(f, strcat(filename, '/path.fig'));
+fp = fopen(strcat(filename, '/data.csv'), 'w');
 
-sum(rice_effect(:))
+fprintf(fp, 'count1,');
+for i=1:size(count1, 2)
+    fprintf(fp, '%d,', count1(i));
+end
+fprintf(fp, '\n');
+
+fprintf(fp, 'count2,');
+for i=1:size(count2, 2)
+    fprintf(fp, '%d,', count2(i));
+end
+fprintf(fp, '\n\n');
+
+fprintf(fp, 'time, %f, %f\n', while_time(1), while_time(2));
+fprintf(fp, 'length, %f, %f\n', path_l(1), path_l(2));
+
+fclose('all');
+%}

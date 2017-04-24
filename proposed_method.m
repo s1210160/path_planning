@@ -39,6 +39,10 @@ n = 1;
 tic;
 while(1)
     
+    if n > size(target, 1)
+        break;
+    end
+    
     %　領域外に出た
     if 10 < robot.x || robot.x < 0
         break;
@@ -106,6 +110,8 @@ while(1)
         if target(n,2)-cell_w/2 < robot.y && robot.y <= target(n,2)+cell_w/2
             % ターゲット番号の更新
             
+            n = n + 1;
+            %{
             target(1, :) = [];
             
             if size(target, 1) == 0
@@ -117,7 +123,7 @@ while(1)
             elseif target(1, 3) == target(2, 3)
                 target = update_task(target, robot)
             end
-            
+            %}
             
             %target = update_task(target, robot);
         end

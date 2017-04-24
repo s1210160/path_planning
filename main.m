@@ -3,7 +3,7 @@ clear all;
 
 % ガウス分布の設定
 mu = 0;
-sigma = 3.0;
+sigma = 10.0 * pi / 180;
 R = chol(sigma);
 
 % セル幅
@@ -49,7 +49,7 @@ while(1)
     %-----------------終了条件-------------------%
     % 最後まで訪問した
     if n > size(target, 1)
-        if target == target1
+        if target == target3
             break;
         else
             n = 1;
